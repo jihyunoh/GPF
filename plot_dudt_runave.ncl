@@ -1,3 +1,5 @@
+; Specify the location of your NCL as $NCARG_ROOT in your .cshrc for csh users
+; Ex) setenv NCARG_ROOT /usr/local/ncarg
 
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_code.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"
@@ -6,20 +8,21 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/contrib/time_axis_labels.ncl"
 
  begin
 
-       latN=0.0
-       latS=-7.0
-       lonL=360+73.
-       lonR=360+80.
-       nlev=25
+  ; Select domain for spatial average
+  ; Ex)73E-80E, wlat = 360+40 (western longitudinal boundary), elon = 360+160 (eastern longitudinal boundary)
+  ; 7S-Equator, slat = -7 (southern latitudinal boundary) nlat = 0 (northern latitudinal boundary)
 
-  lon=fspan(180,539.75,1440)
-;;total period of MJO2
+   latN=0.0
+   latS=-7.0
+   lonL=360+73.
+   lonR=360+80.
+   nlev=25
 
   inFile = addfile("../momentum/dudt.nc","r")
   timeUnits = inFile->time@units
   startDynamo = ut_inv_calendar( 2011, 10, 01, 00, 0, 0, timeUnits, 0 )
   endDynamo   = ut_inv_calendar( 2011, 12, 31, 18, 0, 0, timeUnits, 0 )
-  u = inFile->U_ten(:,:,{latS:latN},{lonL:lonR})*86400
+  u = inFile->U_ten(:,:,{latS:latN},{lonL:lonR})*24*60*60
 
   printVarSummary(u)
   time = inFile->time
@@ -27,6 +30,7 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/contrib/time_axis_labels.ncl"
   u@_FillValue = 1e20
   ulon = dim_avg_n_Wrap(u,2)
   uTS = dim_avg_n_Wrap(ulon,2)
+; 5-day moving average 4 times (6 hourly) * 5 day
   TS = runave_n (uTS, 20, 1, 0)
   print(num(ismissing(TS)))
   TS!0="time"

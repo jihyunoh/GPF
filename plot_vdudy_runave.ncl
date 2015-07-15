@@ -1,3 +1,5 @@
+; Specify the location of your NCL as $NCARG_ROOT in your .cshrc for csh users
+; Ex) setenv NCARG_ROOT /usr/local/ncarg
 
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_code.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"
@@ -6,14 +8,15 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/contrib/time_axis_labels.ncl"
 
  begin
 
+  ; Select domain for spatial average
+  ; Ex)73E-80E, wlat = 360+40 (western longitudinal boundary), elon = 360+160 (eastern longitudinal boundary)
+  ; Equator-5N, slat = 0 (southern latitudinal boundary) nlat = 5 (northern latitudinal boundary)
+
        latN=5.0
        latS=0.0
        lonL=360+73.
        lonR=360+80.
        nlev=25
-
-  lon=fspan(180,539.75,1440)
-;;total period of MJO2
 
   inFile = addfile("../momentum/vdudy.nc","r")
   in = addfile("../momentum/dudt.nc","r")
@@ -64,10 +67,8 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/contrib/time_axis_labels.ncl"
   vdudyTSplot&time = ut_convert( vdudyTSplot&time, timeUnits )
   dudtTSplot&time = ut_convert( dudtTSplot&time, timeUnits )
 
-
-
 ;================================================
-;first plot
+;first plot (-vdu/dy in shading)
 ;================================================
  wks                 = gsn_open_wks ("ps", "vdudy_NA_5dayrave_2011" )     ; open workstation
  gsn_define_colormap(wks,"BlGrYeRe")
@@ -115,7 +116,7 @@ res@trYLog = False
  vdudyplot = gsn_csm_pres_hgt (wks,vdudyTSplot({1000:100},{startDynamo:endDynamo}),res)
 
 ;================================================
-;second plot
+;second plot (dudt in contour)
 ;================================================
 
  res@cnFillOn = False
