@@ -142,6 +142,10 @@
   fout->lat = (/lat/)
   fout->lon = (/lon/)
 
+;===================================================================
+;Compute du/dt: use centered difference approximation except for end values.
+;One-sided difference scheme is used for the end values.
+;===================================================================
     do i=0,ntt-1
     print(i)
 
@@ -178,7 +182,6 @@
     delta = ua
     delta = (ua-ub)/(6*60*60)
      
-;  pg(i,:,:,:) = delta(:,{nlat:slat},{wlon:elon})
   pg(i,:,:,:) = (/delta(:,{nlat:slat},{wlon:elon})/)
 
   delete(tafter)
@@ -196,7 +199,6 @@
     delta = ua
     delta = (ua-ub)/(dt*60*60)
      
-;  pg(i,:,:,:) = delta(:,{nlat:slat},{wlon:elon})
   pg(i,:,:,:) = (/delta(:,{nlat:slat},{wlon:elon})/)
 
   delete(tafter)
