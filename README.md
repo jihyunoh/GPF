@@ -5,6 +5,6 @@ Westerly wind burst is one of the defining characteristics of the MJO, but its o
 
 References:
 
-Oh, J.-H., X. Jiang, D. Waliser, M. Moncrieff, R. Johnson, and Paul Ciesielski, 2015a: A Kinematic Analysis of Westerly Wind Events Associated with the Madden-Julian Oscillation during DYNAMO, J. Atmos. Sci., in press.
-Oh, J.-H.2015b:Tools for computing momentum budget of the westerly wind event associated with the Madden-Julian Oscillation, Earth and Space Sciences, in prep.
+1. Oh, J.-H., X. Jiang, D. Waliser, M. Moncrieff, R. Johnson, and Paul Ciesielski, 2015a: A Kinematic Analysis of Westerly Wind Events Associated with the Madden-Julian Oscillation during DYNAMO, J. Atmos. Sci., in press.
+2. Oh, J.-H.2015b:Tools for computing momentum budget of the westerly wind event associated with the Madden-Julian Oscillation, Earth and Space Sciences, in prep.
 
