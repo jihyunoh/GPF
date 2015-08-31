@@ -1,3 +1,5 @@
+; Specify the location of your NCL as $NCARG_ROOT in your .cshrc for csh users
+; Ex) setenv NCARG_ROOT /usr/local/ncarg
 
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_code.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"
@@ -6,35 +8,42 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/contrib/time_axis_labels.ncl"
 
  begin
 
-       latN=5.0
-       latS=0.0
-       lonL=360+73.
-       lonR=360+80.
-       nlev=25
+; Specify domain where predictor (e.g., TRMM) is averaged.
 
-  lon=fspan(180,539.75,1440)
-;;total period of MJO2
+ latN=5.0
+ latS=0.0
+ lonL=360+73.
+ lonR=360+80.
 
-  inFile = addfile("../momentum/U.nc","r")
-  timeUnits = inFile->time@units
-  startDynamo = ut_inv_calendar( 2011, 10, 01, 00, 0, 0, timeUnits, 0 )
-  endDynamo   = ut_inv_calendar( 2012, 03, 31, 18, 0, 0, timeUnits, 0 )
-;  u = inFile->U(:,:,{latS:latN},{lonL:lonR})
-  time = inFile->time
-   level=inFile->level
-  delete(inFile)
-  
+; Number of vertical level
+nlev=25
+; Explicit vertical level
+lev = (/150,200,250,300,400,500,600,700,800,850,900,925,950,1000/)
+
+; Create time and vertical level arrays from inFile
+; inFile has 4-dimensional (x,y,z,t) data structure spanning from Oct-01-2011 to Mar-31-2012
+
+ inFile = addfile("../momentum/U.nc","r")
+ timeUnits = inFile->time@units
+ startDynamo = ut_inv_calendar( 2011, 10, 01, 00, 0, 0, timeUnits, 0 )
+ endDynamo   = ut_inv_calendar( 2012, 03, 31, 18, 0, 0, timeUnits, 0 )
+ time = inFile->time
+ level=inFile->level
+ delete(inFile)
+
+; Read predictor: every 6-hour (00, 06, 12, 18 UTC) TRMM data are located in 'trmm' directory 
+ 
   files = systemfunc ("ls ../trmm/3B42*.7.nc")
   f = addfiles (files, "r")
   ListSetType (f, "Join")
-  pcp = f[:]->pcp(:,0,{latS:latN},{73:80})
+  pcp = f[:]->pcp(:,0,{latS:latN},{lonL-360:lonR-360})
 
 ;Array average
   ulon = dim_avg_n_Wrap(pcp,2)
   delete(pcp)
   uTS = dim_avg_n_Wrap(ulon,1)
 
-;5-day running mean
+;5-day running mean: 4 times per day x 5-day = 20
   TS = runave_n (uTS, 20, 1, 0)
 
   TS!0="time"
@@ -49,9 +58,11 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/contrib/time_axis_labels.ncl"
   trmmxtrmm = TS*TS
   b2 = dim_sum_n( trmmxtrmm, 0 )
 
-;===dudt-========================================
+; Read predictand: dudt =============================
 
   inFile = addfile("../momentum/dudt.nc","r")
+
+; Convert unit from m/sec/sec to m/sec/day by multyplying 86400
   u = inFile->U_ten(:,:,{latS:latN},{lonL:lonR})*86400
   runU = runave_n(u,20,1,0)
   delete(u)
@@ -77,7 +88,6 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/contrib/time_axis_labels.ncl"
   regdudt!0="level"
   regdudt&level=level
 
-  lev = (/150,200,250,300,400,500,600,700,800,850,900,925,950,1000/)
  data      = new((/1,dimsizes(lev)/),float)
  data!1="level"
  data&level=lev
@@ -87,7 +97,7 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/contrib/time_axis_labels.ncl"
 ;************************************************
 ; create plot
 ;************************************************
- wks   = gsn_open_wks ("pdf","regression_dudt_NA")                  ; open ps file
+ wks   = gsn_open_wks ("pdf","regression_dudt_NA")     ; open pdf file
 
  res                   = True                       ; plot mods desired
  res@trYReverse        = True                       ; reverse Y-axis

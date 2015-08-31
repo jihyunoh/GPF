@@ -40,7 +40,6 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/contrib/time_axis_labels.ncl"
 
   ududxTS = runave_n (ududxTS, 20, 1, 0)
   dudtTS = runave_n (dudtTS, 20, 1, 0)
-;  dudtTS = runave_n (dudtTS, 3, 1, 1)
 
   ududxTS!0="time"
   dudtTS!0="time"
