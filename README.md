@@ -7,6 +7,7 @@ Westerly wind burst is one of the defining characteristics of the MJO, but its o
 Relevant example data: 
 ===================================
 Oh, J (2015a), An example of ECMWF Deterministic Model analysis data for DYNAMO. Zenodo. doi:10.5281/zenodo.32886
+
 Oh, J. (2015b), ECMWF operational analysis transformed to netcdf format, Zenodo,  doi:10.5281/zenodo.16581.
 
 References:
